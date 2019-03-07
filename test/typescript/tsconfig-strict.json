@@ -10,7 +10,9 @@
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
     "lib": [
-      "es2017",
+      "es5",
+      "es2015",
+      "es2016.array.include",
       "esnext.asynciterable"
     ]
   }

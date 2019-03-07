@@ -11,8 +11,8 @@
       "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
       "stopOnEntry": false,
       "args": [
-        "--config",
-        "src/.mocharc.json",
+        "--opts",
+        "src/mocha.opts",
         "--no-timeouts",
         "src/*.spec.js",
         "src/**/*.spec.js"

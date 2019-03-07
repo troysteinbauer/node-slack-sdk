@@ -1,4 +1,5 @@
 import { Agent } from 'http';
+import objectValues = require('object.values'); // tslint:disable-line:import-name no-require-imports
 import EventEmitter = require('eventemitter3'); // tslint:disable-line:import-name no-require-imports
 import WebSocket = require('ws'); // tslint:disable-line:import-name no-require-imports
 import Finity, { StateMachine } from 'finity'; // tslint:disable-line:import-name
@@ -85,7 +86,6 @@ export class RTMClient extends EventEmitter {
           this.outgoingEventQueue.pause();
           // when a formerly connected client gets disconnected, all outgoing messages whose promises were waiting
           // for a reply from the server should be canceled
-          // TODO: we could give a reason for this here
           this.awaitingReplyList.forEach(p => p.cancel());
         })
       .state('connecting')
@@ -121,7 +121,7 @@ export class RTMClient extends EventEmitter {
                   // NOTE: assume that ReadErrors are recoverable
                   let isRecoverable = true;
                   if (error.code === ErrorCode.PlatformError &&
-                      Object.values(UnrecoverableRTMStartError).includes(error.data.error)) {
+                      objectValues(UnrecoverableRTMStartError).includes(error.data.error)) {
                     isRecoverable = false;
                   } else if (error.code === ErrorCode.RequestError) {
                     isRecoverable = false;
@@ -456,7 +456,7 @@ export class RTMClient extends EventEmitter {
   public addOutgoingEvent(awaitReply: false, type: string, body?: {}): Promise<void>;
   public addOutgoingEvent(awaitReply: boolean, type: string, body?: {}): Promise<RTMCallResult | void> {
     const awaitReplyTask = (messageId: number) => {
-      const replyPromise = new PCancelable<RTMCallResult>((resolve, reject, onCancel) => {
+      const replyPromise = new PCancelable<RTMCallResult>((onCancel, resolve, reject) => {
         const eventHandler = (_type: string, event: RTMCallResult) => {
           if (event.reply_to === messageId) {
             this.off('slack_event', eventHandler);
