@@ -127,6 +127,7 @@ describe('createHTTPHandler', function () {
     res.end.callsFake(function (result) {
       assert.equal(res.statusCode, 500);
       assert.equal(result, 'test error');
+      assert.equal(res.content, 'Parsing request body prohibits request signature verification');
       delete process.env.NODE_ENV;
       done();
     });
